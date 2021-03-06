@@ -1,5 +1,5 @@
 #include "bitset.h"
-#include <math.h>
+//#include <math.h>
 #include "error.h"
 
 /**  Jako testovací příklad implementujte funkci, která použije algoritmus známý
@@ -17,9 +17,9 @@ void Eratosthenes(bitset_t pole) {
   bitset_setbit(pole, 0, 1);
   bitset_setbit(pole, 1, 1);
 
-  double sqr_N = sqrt(N);
+  //double sqr_N = sqrt(N);
 
-  for (bitset_index_t i = 2; i <= sqr_N; i++) {
+  for (bitset_index_t i = 2; N*N <= i; i++) {
     if (!bitset_getbit(pole, i)) {
       for(bitset_index_t n = 2*i; n < N; n += i)
         bitset_setbit(pole, n, 1);
