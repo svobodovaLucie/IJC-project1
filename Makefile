@@ -5,7 +5,7 @@ CFLAGS = -g -std=c11 -pedantic -Wall -Wextra -lm -O2
 
 all: primes primes-i
 
-#COPILE WITH MACROS 
+# kompilace s makry 
 primes: primes.o error.o eratosthenes.o
 	gcc $(CFLAGS) primes.o error.o eratosthenes.o -o primes
 
@@ -19,7 +19,7 @@ error.o: error.h error.c
 	gcc $(CFLAGS) -c error.c -o error.o
 
 
-#COMPILE WITH INLINE FUNCTIONS 
+# kompilace s inline funkcemi
 primes-i: primes-i.o error.o eratosthenes-i.o bitset.o
 	gcc $(CFLAGS) -DUSE_INLINE primes-i.o error.o eratosthenes-i.o bitset.o -o primes-i
 
@@ -34,6 +34,15 @@ bitset.o: bitset.c bitset.h
 	gcc $(CFLAGS) -DUSE_INLINE -c bitset.c -o bitset.o
 	                
 
+# kompilace steg-decode
+steg-decode: steg-decode.o eratosthenes.o error.o ppm.o
+	gcc $(CFLAGS) steg-decode.o eratosthenes.o error.o ppm.o -o steg-decode
+
+steg-decode.o: steg-decode.c primes.h bitset.h error.h ppm.h
+	gcc $(CFLAGS) -c steg-decode.c -o steg-decode.o
+
+ppm.o: ppm.c error.h ppm.h
+	gcc $(CFLAGS) -c ppm.c -o ppm.o
 
 clean:
 	rm *.o

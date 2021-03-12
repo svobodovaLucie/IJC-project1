@@ -7,6 +7,9 @@
 #include <limits.h>
 #include "error.h"
 
+// opravit vypocet velikosti potrebne pameti u bitset_create a bitset_alloc (ceil())
+// upravit calloc
+
 #define UL_BITS (sizeof(unsigned long) * CHAR_BIT) // 64
 #define UL_BYTES sizeof(unsigned long) // 8
 #define RESERVED 1 // prvni prvek pole je rezervovan pro ulozeni velikosti pole
@@ -20,13 +23,13 @@ typedef long unsigned *bitset_t;
 /* Definuje a nuluje proměnnou jmeno_pole */
 #define bitset_create(jmeno_pole, velikost) \
     static_assert(velikost > 0 && velikost < ULLONG_MAX, "CHYBA: bitset_create: Chybna velikost pole."); \
-    bitset_index_t jmeno_pole[(velikost)/UL_BITS + 1 + RESERVED] = {velikost}
+    bitset_index_t jmeno_pole[(velikost)/UL_BITS + RESERVED + ((velikost % UL_BITS) ? 1 : 0)] = {velikost, }
 
 /* Definuje proměnnou jmeno_pole tak, aby byla kompatibilní s polem
  * vytvořeným pomocí bitset_create, ale pole je alokováno dynamicky. */
 #define bitset_alloc(jmeno_pole,velikost)\
-    _Static_assert(velikost > 0 && velikost < ULONG_MAX, "CHYBA: bitset_alloc: Chybna velikost pole."); \
-    bitset_t jmeno_pole =  calloc(((velikost)/UL_BYTES) + UL_BYTES, 1); \
+    assert(velikost > 0 && velikost < ULONG_MAX); \
+    bitset_t jmeno_pole =  calloc((velikost)/UL_BITS + RESERVED + ((velikost % UL_BITS) ? 1 : 0), sizeof(bitset_index_t)); \
     if(jmeno_pole == NULL) error_exit("bitset_alloc: Chyba alokace paměti"); \
     jmeno_pole[0] = velikost
 

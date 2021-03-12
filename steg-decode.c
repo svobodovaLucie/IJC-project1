@@ -1,20 +1,51 @@
-Napište testovací program "steg-decode.c", kde ve funkci main načtete ze
-    souboru zadaného jako jediný argument programu obrázek ve formátu PPM
-    a v něm najdete uloženou "tajnou" zprávu. Zprávu vytisknete na stdout.
+#include <limits.h>
+#include <ctype.h>
+#include <stdio.h>
 
-     Zpráva je řetězec znaků (char, včetně '\0') uložený po jednotlivých bitech
-    (počínaje LSb) na nejnižších bitech (LSb) vybraných bajtů barevných složek
-    v datech obrázku. Dekódování ukončete po dosažení '\0'.
-    Pro DU1 budou vybrané bajty určeny prvočísly (počínaje od 23) -- použijte
-    Eratostenovo síto podobně jako v příkladu "primes.c" a začněte prvočíslem 23.
-    Velikost bitového pole musí odpovídat velikosti obrazových dat.
+#include "error.h"
+#include "ppm.h"
+#include "primes.h"
 
-    Program použije error_exit v případě chyby čtení souboru (chybný formát),
-    a v případě, že zpráva není korektně ukončena '\0'. Předpokládejte
-    možnost uložení textu zprávy ve formátu UTF-8.
+// spusteni: ./steg-decode du1-obrazek.ppm
 
-    Použijte program "make" pro překlad/sestavení programu.
-    Testovací příkaz:  ./steg-decode du1-obrazek.ppm
+#define TROJKA 3
 
-    Zájemci si mohou vytvořit i program "steg-encode.c" (nehodnotí se).
-    Zamyslete se nad (ne)vhodností použití implementačních limitů.
+int main (int argc, char *argv[]) {
+
+    // kontrola poctu argumentu
+    if (argc != 2)
+        error_exit("CHYBA: steg-decode: Chybny pocet zadanych argumentu");
+    
+    const char *filename = argv[argc - 1];
+    struct ppm *pic = ppm_read(filename);
+    if (pic == NULL) {
+        error_exit("steg-decode: Chyba nacteni obrazku");
+    }
+
+    unsigned long pic_size = 3 * pic->xsize * pic->ysize;
+    bitset_alloc(bitset_array, pic_size);    
+    Eratosthenes(bitset_array);
+    
+    
+    char secret_char = '\0';
+    unsigned i_secret = 0;
+
+    for (unsigned long i = 23; i < bitset_size(bitset_array); i++) {
+        if (!bitset_getbit(bitset_array, i)) {
+            secret_char |= (pic->data[i] & 1) << i_secret;
+            i_secret++;
+        }
+        if (i_secret == CHAR_BIT) {
+            i_secret = 0;
+            if (secret_char == '\0')
+                break;
+            fputc(secret_char, stdout);
+            secret_char = '\0';
+        }
+    }
+
+    bitset_free(bitset_array);
+    ppm_free(pic);
+
+    return 0;
+}
