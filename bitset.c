@@ -1,3 +1,9 @@
+// bitset.c
+// Řešení IJC-DU1, příklad a), 12.3.2021
+// Autor: Lucie Svobodova, xsvobo1x, FIT
+// Přeloženo: gcc 9.3.0
+// Soubor obsahuje deklarace inline funkci pro praci s bitovym polem
+
 #include "bitset.h"
 
 /* Nastaví zadaný bit v poli na hodnotu zadanou výrazem */
