@@ -6,6 +6,7 @@ Jazyk C                    DU1                         23.2.2021
 
                       Domácí úkol č.1
 
+HODNOCENÍ: 15/15
 
 Termín odevzdání:  23.3.2021
  Hodnocení celkem max. 15 bodů
@@ -253,3 +254,4 @@ C) Obecné pokyny pro vypracování domácích úkolů (rev 18.2.2020)
 
 * Opsané úkoly budou hodnoceny 0 bodů pro všechny zůčastněné
   a to bez výjimky (+bonus v podobě návštěvy u disciplinární komise).
+  
